@@ -128,7 +128,11 @@ function hotHui(i){
   luu();
   veBang();
 }
-function veBang(){
+function veBang()let soNguoiDong = danhSach.filter(n => n.daDong).length;
+  let tongDong = soNguoiDong * TIEN_HUI;
+
+  document.getElementById("tongTien").innerText =
+    "Tổng tiền đã đóng: " + tongDong.toLocaleString() + " đ";{
   let html = "";
   danhSach.forEach((n,i)=>{
     html += `
@@ -159,15 +163,12 @@ function veBang(){
   document.getElementById("bang").innerHTML = html;
 }
 
-veBang();let soNguoiDong = danhSach.filter(n => n.daDong).length;
-let tongDong = soNguoiDong * TIEN_HUI;
 
-document.getElementById("tongTien").innerText =
-  "Tổng tiền đã đóng: " + tongDong.toLocaleString() + " đ";
 </script>
 
 </body>
 </html>
+
 
 
 
