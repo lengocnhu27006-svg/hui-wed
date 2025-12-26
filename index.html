@@ -33,7 +33,7 @@ select,input{
 <body>
 
 <h2>QUẢN LÝ HỤI THEO NGƯỜI</h2>
-
+<button onclick="themNguoi()">➕ Thêm người</button>
 <p>
 Số người:
 <input type="number" id="soNguoi" value="20">
@@ -67,7 +67,13 @@ Tiền hụi / tháng:
 
 <script>
 let danhSach = [];
-
+function themNguoi(){
+  danhSach.push({
+    ten: "Người " + (danhSach.length + 1),
+    dong: true
+  });
+  veBang();
+}
 function taoDanhSach(){
   const soNguoi = Number(soNguoi.value);
   danhSach = [];
@@ -110,4 +116,5 @@ function hot(i){
 </script>
 
 </body>
+
 </html>
