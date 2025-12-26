@@ -28,6 +28,7 @@ button:hover{
 }
 
 table{
+  <p id="tongTien" style="margin-top:15px;font-weight:bold"></p>
   border-collapse:collapse;
   width:100%;
   margin-top:15px;
@@ -82,12 +83,14 @@ input[type="checkbox"]{
   <th>Tên người</th>
   <th>Đã đóng</th>
   <th>Hốt</th>
+<th>Tiền hốt</th>
 </tr>
 </thead>
 <tbody id="bang"></tbody>
 </table>
 
 <script>
+  const TIEN_HUI = 5000000; // 5 triệu / tháng
 let danhSach = JSON.parse(localStorage.getItem("hui")) || [];
 
 function luu(){
@@ -98,7 +101,8 @@ function themNguoi(){
   danhSach.push({
     ten: "Người " + (danhSach.length + 1),
     daDong: false,
-    daHot: false
+    daHot: false,
+    tienHot: 0
   });
   luu();
   veBang();
@@ -115,11 +119,15 @@ function hotHui(i){
     alert("Người này đã hốt rồi!");
     return;
   }
+
+  let soNguoiChuaHot = danhSach.filter(n => !n.daHot).length;
+
   danhSach[i].daHot = true;
+  danhSach[i].tienHot = soNguoiChuaHot * TIEN_HUI;
+
   luu();
   veBang();
 }
-
 function veBang(){
   let html = "";
   danhSach.forEach((n,i)=>{
@@ -137,19 +145,28 @@ function veBang(){
       </td>
 
       <td>
-        ${n.daHot 
-          ? "<span class='daHot'>ĐÃ HỐT</span>"
-          : "<button onclick='hotHui("+i+")'>Hốt</button>"
-        }
-      </td>
+  ${n.daHot 
+    ? "<span class='daHot'>ĐÃ HỐT</span>"
+    : "<button onclick='hotHui("+i+")'>Hốt</button>"
+  }
+</td>
+
+<td>
+  ${n.daHot ? n.tienHot.toLocaleString() + " đ" : ""}
+</td>
     </tr>`;
   });
   document.getElementById("bang").innerHTML = html;
 }
 
-veBang();
+veBang();let soNguoiDong = danhSach.filter(n => n.daDong).length;
+let tongDong = soNguoiDong * TIEN_HUI;
+
+document.getElementById("tongTien").innerText =
+  "Tổng tiền đã đóng: " + tongDong.toLocaleString() + " đ";
 </script>
 
 </body>
 </html>
+
 
