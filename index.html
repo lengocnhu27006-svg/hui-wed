@@ -98,13 +98,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  databaseURL: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
+  apiKey: "AIzaSyDpq88WAHmd_R7N7yxFEJQ2tIl7W9veMrM",
+  authDomain: "quan-ly-hui-4da92.firebaseapp.com",
+  databaseURL: "https://quan-ly-hui-4da92-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "quan-ly-hui-4da92",
+  storageBucket: "quan-ly-hui-4da92.firebasestorage.app",
+  messagingSenderId: "1061936324919",
+  appId: "1:1061936324919:web:8533cc051628218fee7ab2"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -132,12 +132,6 @@ onValue(dataRef, (snapshot) => {
 function luuDuLieu(){
   set(dataRef, data);
 }
-
-/* 👇👇👇
-   DÁN TOÀN BỘ HÀM CỦA EM XUỐNG DƯỚI
-   veBang, themNguoi, hotHui, resetHui, undo...
-*/
-</script>
 
 
 
@@ -507,6 +501,7 @@ set(ref(db,"huiData"), data);
 
 </body>
 </html>
+
 
 
 
