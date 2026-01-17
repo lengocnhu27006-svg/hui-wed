@@ -77,7 +77,7 @@ button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDpq88WAHmd_R7N7yxFEJQ2tIl7W9veMrM",
@@ -104,18 +104,21 @@ let data = {
   danhSach:[]
   
 };
+  const dataRef = ref(db, "huiData");
+
+onValue(dataRef, (snapshot) => {
+  if(snapshot.exists()){
+    data = snapshot.val();
+    veBang();
+  }
+});
+
 let lichSuXoa = []; // ✅ lưu lịch sử xoá nhiều lần
 
 function luuDuLieu(){
   set(ref(db, "huiData"), data);
 }
 
-async function taiDuLieu(){
-  const snapshot = await get(ref(db, "huiData"));
-  if(snapshot.exists()){
-    data = snapshot.val();
-  }
-}
 
 
 function capNhatKy(){
@@ -472,17 +475,18 @@ function resetHui(){
   danhSach:[]
 };
 
-  localStorage.removeItem("huiData");
+set(ref(db,"huiData"), data);
+
   veBang();
 }
 
-taiDuLieu();
-veBang();
+
  
 
 </script>
 
 </body>
 </html>
+
 
 
