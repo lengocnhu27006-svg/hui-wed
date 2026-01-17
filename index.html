@@ -107,12 +107,16 @@ let data = {
   tongHot:{},
   danhSach:[]
 };
-  db.ref("huiData").once("value").then(snap => {
+  db.ref("huiData").on("value", snap => {
   if (snap.exists()) {
     data = snap.val();
-    veBang();
+  } else {
+    // lần đầu chưa có dữ liệu
+    db.ref("huiData").set(data);
   }
+  veBang();
 });
+
 
 let backupXoa = null; // lưu để hoàn tác xoá
 
@@ -439,16 +443,18 @@ function resetHui(){
 };
 
   localStorage.removeItem("huiData");
+  db.ref("huiData").set(data);
   veBang();
 }
 
-taiDuLieu();
+
 veBang();
 </script>
 
 
 </body>
 </html>
+
 
 
 
