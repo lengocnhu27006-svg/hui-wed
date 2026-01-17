@@ -83,7 +83,7 @@ button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-  <script>
+
 /* ===== BƯỚC FIX LỖI KHÔNG ẤN ĐƯỢC ===== */
 const ky = document.getElementById("ky");
 const ngayKhui = document.getElementById("ngayKhui");
@@ -115,15 +115,25 @@ let data = {
   tongHot:{},
   danhSach:[]
 };
-  db.ref("huiData").on("value", snap => {
-  if (snap.exists()) {
-    data = snap.val();
-  } else {
-    // lần đầu chưa có dữ liệu
-    db.ref("huiData").set(data);
-  }
+let dangCapNhat = false;
+
+db.ref("huiData").on("value", snap => {
+  if (!snap.exists()) return;
+
+  if (dangCapNhat) return; // 🚫 không tự đè chính mình
+
+  data = snap.val();
   veBang();
 });
+
+function luuDuLieu(){
+  dangCapNhat = true;
+  localStorage.setItem("huiData", JSON.stringify(data));
+  db.ref("huiData").set(data).then(()=>{
+    dangCapNhat = false;
+  });
+}
+
 
 
 let backupXoa = null; // lưu để hoàn tác xoá
@@ -462,6 +472,7 @@ veBang();
 
 </body>
 </html>
+
 
 
 
