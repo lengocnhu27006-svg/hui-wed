@@ -111,15 +111,16 @@ let lichSuXoa = [];
 
 
 
-onValue(dataRef, (snapshot) => {
-  if(snapshot.exists()){
+dataRef.on("value", (snapshot) => {
+  if (snapshot.exists()) {
     data = snapshot.val();
-    veBang();
   }
+  veBang();
 });
 
+
 function luuDuLieu(){
-  set(dataRef, data);
+  dataRef.set(data);
 }
 
 
@@ -478,7 +479,8 @@ function resetHui(){
   danhSach:[]
 };
 
-set(ref(db,"huiData"), data);
+dataRef.set(data);
+
 
   veBang();
 }
@@ -490,6 +492,7 @@ set(ref(db,"huiData"), data);
 
 </body>
 </html>
+
 
 
 
