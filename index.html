@@ -56,11 +56,7 @@ button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
 <button class="them" onclick="themNguoi()" id="btnThem">➕ Thêm người</button>
 <button class="ky" onclick="xuatPDF()">📤 Xuất PDF gửi Zalo</button>
 <button class="xoa" onclick="resetHui()" id="btnReset">♻ Reset dây hụi</button>
-<div id="undoBox" style="display:none;margin-top:10px">
-  <button onclick="hoanTacXoa()" style="background:#f1c40f;color:#000">
-    ↩ Hoàn tác xoá
-  </button>
-</div>
+<button class="ky" onclick="undoXoa()">↩ Undo xoá</button>
 
 <table>
 <thead>
@@ -78,32 +74,6 @@ button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
 </table>
 
 <div class="tongHot" id="tongHot"></div>
-<!-- ===== FIREBASE (PHẢI Ở TRÊN) ===== -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-<script>
-
-/* ===== BƯỚC FIX LỖI KHÔNG ẤN ĐƯỢC ===== */
-const ky = document.getElementById("ky");
-const ngayKhui = document.getElementById("ngayKhui");
-const ngaygiao = document.getElementById("ngaygiao");
-const bang = document.getElementById("bang");
-const tongHot = document.getElementById("tongHot");
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDpq88WAHmd_R7N7yxFEJQ2tIl7W9veMrM",
-    authDomain: "quan-ly-hui-4da92.firebaseapp.com",
-    databaseURL: "https://quan-ly-hui-4da92-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "quan-ly-hui-4da92",
-    storageBucket: "quan-ly-hui-4da92.appspot.com",
-    messagingSenderId: "1061936324919",
-    appId: "1:1061936324919:web:8533cc051628218fee7ab2"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
 
 <script>
 const TIEN_HUI = 5000000;
@@ -114,53 +84,13 @@ let data = {
   ngayGiao:{},
   tongHot:{},
   danhSach:[]
+  let lichSuXoa = []; // ✅ LƯU NHIỀU LẦN XOÁ
+
 };
-let dangCapNhat = false;
-
-db.ref("huiData").on("value", snap => {
-  if (!snap.exists()) return;
-
-  if (dangCapNhat) return; // 🚫 không tự đè chính mình
-
-  data = snap.val();
-  veBang();
-});
 
 function luuDuLieu(){
-  dangCapNhat = true;
-  localStorage.setItem("huiData", JSON.stringify(data));
-  db.ref("huiData").set(data).then(()=>{
-    dangCapNhat = false;
-  });
+  localStorage.setItem("huiData",JSON.stringify(data));
 }
-
-
-
-let backupXoa = null; // lưu để hoàn tác xoá
-
-
-  function xoaNguoi(i){
-  if(!confirm("Xoá người này? Có thể hoàn tác.")) return;
-  backupXoa = JSON.stringify(data.danhSach); // lưu lại danh sách
-  data.danhSach.splice(i,1);
-  luuDuLieu();
-  veBang();
-  hienNutHoanTac();
-}
-
-function hoanTacXoa(){
-  if(!backupXoa) return;
-  data.danhSach = JSON.parse(backupXoa);
-  backupXoa = null;
-  luuDuLieu();
-  veBang();
-  document.getElementById("undoBox").style.display="none";
-}
-
-function hienNutHoanTac(){
-  document.getElementById("undoBox").style.display="block";
-}
-
 function taiDuLieu(){
   let d=localStorage.getItem("huiData");
   if(d) data=JSON.parse(d);
@@ -260,7 +190,11 @@ ngaygiao.value = data.ngayGiao[data.ky] || "";
  ${ls?.daDong?"✔":""}
 </td>
 <td>${ls?ls.dong.toLocaleString()+" đ":""}</td>
-<td>${ls?.boTham?ls.boTham.toLocaleString()+" đ":""}</td>
+<td onclick="suaBoTham(${i})"
+    style="cursor:pointer;color:#2980b9;font-weight:bold">
+  ${ls?.boTham ? ls.boTham.toLocaleString() + " đ" : "—"}
+</td>
+
 <td>
 ${ls?.daHot?"🔥 ĐÃ HỐT":daChet(n)?"☠ CHƯNG CHẾT":"✔ CHƯNG SỐNG"}
 ${!ls?.daHot && !daChet(n)?`<br><button class="hot" onclick="hotHui(${i})">Hốt</button>`:""}
@@ -280,7 +214,9 @@ luuDuLieu()
 </select>
 </td>
 
-<td><button class="xoa" onclick="xoaNguoi(${i})">❌</button></td>
+<td>
+<button class="xoa" onclick="xoaNguoi(${i})">❌</button>
+</td>
 
 </tr>`; 
   });
@@ -445,6 +381,50 @@ ${thongTinChuHuiQR()}
   w.document.close();
 }
 
+function suaBoTham(i){
+  let ky = data.ky;
+  let ls = data.danhSach[i].lichSu[ky];
+
+  // Chưa hốt thì không cho sửa
+  if(!ls || !ls.daHot){
+    alert("❌ Người này chưa hốt, không có tiền bỏ thăm để sửa");
+    return;
+  }
+
+  let soMoi = prompt(
+    "Nhập lại số tiền bỏ thăm:",
+    ls.boTham
+  );
+
+  if(soMoi === null) return; // bấm huỷ
+
+  soMoi = parseInt(soMoi);
+  if(isNaN(soMoi) || soMoi < 0){
+    alert("❌ Số tiền không hợp lệ");
+    return;
+  }
+
+  // cập nhật tiền bỏ thăm
+  ls.boTham = soMoi;
+
+  // tính lại tổng tiền hốt
+  let tong = 0;
+  data.danhSach.forEach((n,idx)=>{
+    let l = n.lichSu[ky];
+    if(!l) return;
+
+    if(idx !== i){
+      if(!daChet(n)) l.dong = TIEN_HUI - soMoi;
+      else l.dong = TIEN_HUI;
+      tong += l.dong;
+    }
+  });
+
+  data.tongHot[ky] = tong;
+
+  luuDuLieu();
+  veBang();
+}
 
 function resetHui(){
   if(!confirm("Reset toàn bộ dây hụi?")) return;
@@ -457,21 +437,28 @@ function resetHui(){
 };
 
   localStorage.removeItem("huiData");
-  db.ref("huiData").set(data);
   veBang();
 }
 
-
+taiDuLieu();
 veBang();
-</script>
+  function xoaNguoi(i){
+  if(!confirm("Xoá người này?")) return;
+  lichSuXoa.push(JSON.stringify(data.danhSach));
+  data.danhSach.splice(i,1);
+  luuDuLieu(); veBang();
+}
 
+function undoXoa(){
+  if(lichSuXoa.length===0){
+    alert("Không còn lịch sử để hoàn tác");
+    return;
+  }
+  data.danhSach = JSON.parse(lichSuXoa.pop());
+  luuDuLieu(); veBang();
+}
+
+</script>
 
 </body>
 </html>
-
-
-
-
-
-
-
