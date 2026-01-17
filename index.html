@@ -89,10 +89,19 @@ let data = {
   tongHot:{},
   danhSach:[]
 };
+  db.ref("huiData").once("value").then(snap => {
+  if (snap.exists()) {
+    data = snap.val();
+    veBang();
+  }
+});
+
 let backupXoa = null; // lưu để hoàn tác xoá
 
 function luuDuLieu(){
   localStorage.setItem("huiData",JSON.stringify(data));
+  db.ref("huiData").set(data);
+
 }
   function xoaNguoi(i){
   if(!confirm("Xoá người này? Có thể hoàn tác.")) return;
@@ -418,7 +427,26 @@ function resetHui(){
 taiDuLieu();
 veBang();
 </script>
+<!-- ===== FIREBASE (KHÔNG TỐN TIỀN) ===== -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpq88WAHmd_R7N7yxFEJQ2tIl7W9veMrM",
+    authDomain: "quan-ly-hui-4da92.firebaseapp.com",
+    databaseURL: "https://quan-ly-hui-4da92-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "quan-ly-hui-4da92",
+    storageBucket: "quan-ly-hui-4da92.appspot.com",
+    messagingSenderId: "1061936324919",
+    appId: "1:1061936324919:web:8533cc051628218fee7ab2"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
 
 </body>
 </html>
+
 
