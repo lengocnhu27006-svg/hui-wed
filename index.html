@@ -93,7 +93,23 @@ const app = initializeApp(firebaseConfig);
 window.db = getDatabase(app);
 </script>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 const TIEN_HUI = 5000000;
 
 let data = {
@@ -102,9 +118,9 @@ let data = {
   ngayGiao:{},
   tongHot:{},
   danhSach:[]
-  
 };
-  const dataRef = ref(db, "huiData");
+
+const dataRef = ref(db, "huiData");
 
 onValue(dataRef, (snapshot) => {
   if(snapshot.exists()){
@@ -113,11 +129,15 @@ onValue(dataRef, (snapshot) => {
   }
 });
 
-let lichSuXoa = []; // ✅ lưu lịch sử xoá nhiều lần
-
 function luuDuLieu(){
-  set(ref(db, "huiData"), data);
+  set(dataRef, data);
 }
+
+/* 👇👇👇
+   DÁN TOÀN BỘ HÀM CỦA EM XUỐNG DƯỚI
+   veBang, themNguoi, hotHui, resetHui, undo...
+*/
+</script>
 
 
 
@@ -487,6 +507,7 @@ set(ref(db,"huiData"), data);
 
 </body>
 </html>
+
 
 
 
