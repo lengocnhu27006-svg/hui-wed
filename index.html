@@ -138,11 +138,7 @@ function luuDuLieu(){
 
 let backupXoa = null; // lưu để hoàn tác xoá
 
-function luuDuLieu(){
-  localStorage.setItem("huiData",JSON.stringify(data));
-  db.ref("huiData").set(data);
 
-}
   function xoaNguoi(i){
   if(!confirm("Xoá người này? Có thể hoàn tác.")) return;
   backupXoa = JSON.stringify(data.danhSach); // lưu lại danh sách
@@ -472,6 +468,7 @@ veBang();
 
 </body>
 </html>
+
 
 
 
