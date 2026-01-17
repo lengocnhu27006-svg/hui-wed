@@ -84,9 +84,9 @@ let data = {
   ngayGiao:{},
   tongHot:{},
   danhSach:[]
-  let lichSuXoa = []; // ✅ LƯU NHIỀU LẦN XOÁ
-
+  
 };
+let lichSuXoa = []; // ✅ lưu lịch sử xoá nhiều lần
 
 function luuDuLieu(){
   localStorage.setItem("huiData",JSON.stringify(data));
@@ -425,7 +425,21 @@ function suaBoTham(i){
   luuDuLieu();
   veBang();
 }
+ function xoaNguoi(i){
+  if(!confirm("Xoá người này?")) return;
+  lichSuXoa.push(JSON.stringify(data.danhSach));
+  data.danhSach.splice(i,1);
+  luuDuLieu(); veBang();
+}
 
+function undoXoa(){
+  if(lichSuXoa.length===0){
+    alert("Không còn lịch sử để hoàn tác");
+    return;
+  }
+  data.danhSach = JSON.parse(lichSuXoa.pop());
+  luuDuLieu(); veBang();
+}
 function resetHui(){
   if(!confirm("Reset toàn bộ dây hụi?")) return;
   data={
@@ -442,23 +456,10 @@ function resetHui(){
 
 taiDuLieu();
 veBang();
-  function xoaNguoi(i){
-  if(!confirm("Xoá người này?")) return;
-  lichSuXoa.push(JSON.stringify(data.danhSach));
-  data.danhSach.splice(i,1);
-  luuDuLieu(); veBang();
-}
-
-function undoXoa(){
-  if(lichSuXoa.length===0){
-    alert("Không còn lịch sử để hoàn tác");
-    return;
-  }
-  data.danhSach = JSON.parse(lichSuXoa.pop());
-  luuDuLieu(); veBang();
-}
+ 
 
 </script>
 
 </body>
 </html>
+
