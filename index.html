@@ -74,24 +74,6 @@ button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
 </table>
 
 <div class="tongHot" id="tongHot"></div>
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDpq88WAHmd_R7N7yxFEJQ2tIl7W9veMrM",
-  authDomain: "quan-ly-hui-4da92.firebaseapp.com",
-  databaseURL: "https://quan-ly-hui-4da92-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "quan-ly-hui-4da92",
-  storageBucket: "quan-ly-hui-4da92.firebasestorage.app",
-  messagingSenderId: "1061936324919",
-  appId: "1:1061936324919:web:8533cc051628218fee7ab2"
-};
-
-const app = initializeApp(firebaseConfig);
-window.db = getDatabase(app);
-</script>
 
 <script>
 const TIEN_HUI = 5000000;
@@ -104,22 +86,15 @@ let data = {
   danhSach:[]
   
 };
-  const dataRef = ref(db, "huiData");
-
-onValue(dataRef, (snapshot) => {
-  if(snapshot.exists()){
-    data = snapshot.val();
-    veBang();
-  }
-});
-
 let lichSuXoa = []; // ✅ lưu lịch sử xoá nhiều lần
 
 function luuDuLieu(){
-  set(ref(db, "huiData"), data);
+  localStorage.setItem("huiData",JSON.stringify(data));
 }
-
-
+function taiDuLieu(){
+  let d=localStorage.getItem("huiData");
+  if(d) data=JSON.parse(d);
+}
 
 function capNhatKy(){
   data.ky=parseInt(ky.value)||1;
@@ -475,26 +450,15 @@ function resetHui(){
   danhSach:[]
 };
 
-set(ref(db,"huiData"), data);
-
+  localStorage.removeItem("huiData");
   veBang();
 }
 
-
+taiDuLieu();
+veBang();
  
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
